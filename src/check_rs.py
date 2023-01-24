@@ -47,6 +47,14 @@ def apply_specific_component_check(component):
         :param response_json: Rs json response
         :return: NagiosResponse
         """
+        # translate the names of components to avoid spaces 
+        if component == "Marketplace_RS":
+            component = "Marketplace RS"
+        elif component == "Athena_RS":
+            component = "Athena RS"
+        elif component == "Online_engine":
+            component = "Online engine"
+        
         # check if the component name exists in the json response
         LOGGER.debug(f"Checking component {component} . . .")
         if component not in response_json:
