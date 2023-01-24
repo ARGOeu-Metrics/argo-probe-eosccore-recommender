@@ -135,7 +135,7 @@ if __name__ == '__main__':
         "-H", "--host", dest="host", type=str, 
         help="RS host"
     )
-     parser.add_argument(
+    parser.add_argument(
         "-u", "--url", dest="url", type=str, required=True,
         help="RS status url"
     )
