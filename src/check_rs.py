@@ -38,7 +38,14 @@ def apply_specific_component_check(component):
     :param component:
     :return: NagiosResponse
     """
-
+    # translate the names of components to avoid spaces 
+    if component == "Marketplace_RS":
+        component = "Marketplace RS"
+    elif component == "Athena_RS":
+        component = "Athena RS"
+    elif component == "Online_engine":
+        component = "Online engine"
+        
     def check_component(response_json):
         """
         Clojure that encapsulates a component and performs checks on the response for the
