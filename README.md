@@ -16,7 +16,8 @@ the following expected functionalities.
 
 Probe command line arguments.
 
-- `--host, -H` The endpoint where the rs status response exists.
+- `--host, -H` The Hostname of the service.
+- `--url, -u` The endpoint where the rs status response exists.
 - `--timeout, -t` The timeout duration in seconds for the http call.
 - `--verify` Verify ssl certificate of the endpoint.
 - `--component, -c` Specific component to check.
@@ -24,5 +25,5 @@ Probe command line arguments.
 
 # Run
 ```shell
-$ ./check_rs.py --host http://rs.io --timeout 60 --component JMS --verify
+$ ./check_rs.py --url http://rs.io/status --timeout 60 --component JMS --verify
 ```
