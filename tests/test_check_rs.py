@@ -36,28 +36,28 @@ class RsCheckTestCase(unittest.TestCase):
 
     @patch("requests.get", side_effect=mocked_requests_get)
     def test_check_component_status(self, mock_requests):
-        nr = check(Namespace(host="http://ex.com/200", verify=True, timeout=60, component="kafka"))
+        nr = check(Namespace(url="http://ex.com/200", verify=True, timeout=60, component="kafka"))
         self.assertEqual("OK - Component kafka is UP.", nr.message)
         self.assertEqual(0, nr.code)
         self.assertTrue(nr.is_ok())
 
     @patch("requests.get", side_effect=mocked_requests_get)
     def test_check_status(self, mock_requests):
-        nr = check(Namespace(host="http://ex.com/200", verify=True, timeout=60, component=None))
+        nr = check(Namespace(url="http://ex.com/200", verify=True, timeout=60, component=None))
         self.assertEqual("OK - Service is UP.", nr.message)
         self.assertEqual(0, nr.code)
         self.assertTrue(nr.is_ok())
 
     @patch("requests.get", side_effect=mocked_requests_get)
     def test_check_json_decode_exception_raised(self, mock_requests):
-        nr = check(Namespace(host="http://ex.com/500", verify=True, timeout=60))
+        nr = check(Namespace(url="http://ex.com/500", verify=True, timeout=60))
         self.assertEqual("CRITICAL - Could not parse json response. error: line 1 column 1 (char 0)", nr.message)
         self.assertEqual(2, nr.code)
         self.assertFalse(nr.is_ok())
 
     @patch.object(requests, 'get', MagicMock(side_effect=Exception("side-effect")))
     def test_check_exception_raised(self):
-        nr = check(Namespace(host="http://ex.com", verify=True, timeout=60))
+        nr = check(Namespace(url="http://ex.com", verify=True, timeout=60))
         self.assertEqual("CRITICAL - Exception occurred. "
                          "side-effect", nr.message)
         self.assertEqual(2, nr.code)
@@ -65,7 +65,7 @@ class RsCheckTestCase(unittest.TestCase):
 
     @patch("requests.get", side_effect=mocked_requests_get)
     def test_check_error_status_code(self, mock_requests):
-        nr = check(Namespace(host="http://ex.com/400", verify=True, timeout=60))
+        nr = check(Namespace(url="http://ex.com/400", verify=True, timeout=60))
         self.assertEqual("CRITICAL - Response status code was 400. {'bad': 'request'}", nr.message)
         self.assertEqual(2, nr.code)
         self.assertFalse(nr.is_ok())

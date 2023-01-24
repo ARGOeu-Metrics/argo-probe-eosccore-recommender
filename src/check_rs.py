@@ -94,15 +94,15 @@ def check(args):
     :param args: command line arguments
     :return: final NagiosResponse after the execution of the check flow
     """
-    LOGGER.debug(f"Accessing host: {args.host} . . .")
+    LOGGER.debug(f"Accessing url: {args.url} . . .")
     try:
         rs_response = requests.get(
-            url=args.host,
+            url=args.url,
             verify=args.verify,
             timeout=args.timeout
         )
         LOGGER.debug(
-            f"Host {args.host} answered with a status code of"
+            f"URL {args.url} answered with a status code of"
             f" {rs_response.status_code} and body of {rs_response.content}")
         if rs_response.status_code == 200:
             # set up the check functions
@@ -132,10 +132,13 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser("EOSCCORE RECOMMENDER PROBE")
 
     parser.add_argument(
-        "-H", "--host", dest="host", type=str, required=True,
+        "-H", "--host", dest="host", type=str, 
+        help="RS host"
+    )
+    parser.add_argument(
+        "-u", "--url", dest="url", type=str, required=True,
         help="RS status url"
     )
-
     parser.add_argument(
         "-c", "--component", dest="component", type=str,
         help="Specific component to check"
