@@ -12,6 +12,12 @@ def get_ver():
         raise SystemExit(1)
 
 
+def get_data_files():
+    import sys
+    if sys.platform != "darwin":
+        return [('/usr/libexec/argo/probes/eosccore-recommender', ['src/check_rs.py'])]
+
+
 setup(
     name=NAME,
     version=get_ver(),
@@ -21,5 +27,5 @@ setup(
     url="https://github.com/ARGOeu-Metrics/argo-probe-eosccore-recommender",
     package_dir={'argo_probe_eosccore_recommender': 'modules'},
     packages=['argo_probe_eosccore_recommender'],
-    data_files=[('/usr/libexec/argo/probes/eosccore-recommender', ['src/check_rs.py'])]
+    data_files=get_data_files()
 )

@@ -6,8 +6,9 @@ import logging.handlers
 import sys
 import argparse
 
+from argo_probe_eosccore_recommender.nagios_response import *
+
 # set up logging
-from modules.nagios_response import *
 
 LOGGER = logging.getLogger("eosccore-recommender-probe")
 
@@ -151,7 +152,7 @@ if __name__ == '__main__':
     )
 
     parser.add_argument(
-        "-vvv", "--verbose", dest="verbose", action="store_false",
+        "-vvv", "--verbose", dest="verbose", action="store_true",
         help="Verbose logging"
     )
 
