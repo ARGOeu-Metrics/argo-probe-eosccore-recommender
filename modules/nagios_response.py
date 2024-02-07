@@ -6,6 +6,18 @@ class NagiosResponse:
     def is_ok(self):
         return self.code == 0
 
+    def __str__(self):
+        prefix = ""
+        if self.code == 0:
+            prefix = "OK"
+        elif self.code == 1:
+            prefix = "WARNING"
+        elif self.code == 2:
+            prefix = "CRITICAL"
+        else:
+            prefix = "UNKNOWN"
+        return f"{prefix} - {self.message}"
+
 
 def ok(message):
     """
@@ -14,7 +26,7 @@ def ok(message):
     :param message:
     :return: NagiosResponse
     """
-    return NagiosResponse(message=f"OK - {message}", code=0)
+    return NagiosResponse(message=message, code=0)
 
 
 def warning(message):
@@ -24,7 +36,7 @@ def warning(message):
     :param message:
     :return: NagiosResponse
     """
-    return NagiosResponse(message=f"WARNING - {message}", code=1)
+    return NagiosResponse(message=message, code=1)
 
 
 def critical(message):
@@ -34,7 +46,7 @@ def critical(message):
     :param message: Description
     :return: NagiosResponse
     """
-    return NagiosResponse(message=f"CRITICAL - {message}", code=2)
+    return NagiosResponse(message=message, code=2)
 
 
 def unknown(message):
@@ -44,4 +56,4 @@ def unknown(message):
     :param message:
     :return: NagiosResponse
     """
-    return NagiosResponse(message=f"UNKNOWN - {message}", code=3)
+    return NagiosResponse(message=message, code=3)
