@@ -5,7 +5,7 @@ import requests
 import sys
 import argparse
 
-from modules.checks import *
+from argo_probe_eosccore_recommender.checks import *
 
 # set up logging
 
