@@ -11,49 +11,71 @@ pipeline {
 
     }
     stages {
-        stage ('Test'){
+        stage ('Building and testing...') {
             parallel {
-                stage ('Test Centos 7') {
+                stage('CentOS 7') {
                     agent {
                         docker {
                             image 'argo.registry:5000/epel-7-ams'
                             args '-u jenkins:jenkins'
                         }
                     }
-                    steps {
-                        echo 'Building Rpm...'
-                        sh '''
-                            cd ${WORKSPACE}/$PROJECT_DIR
-                            rm -f tests/argo_probe_eosccore_recommender
-                            ln -s $PWD/modules/ tests/argo_probe_eosccore_recommender
-                            coverage run -m xmlrunner discover --output-file junit.xml -v tests/
-                            coverage xml
-                        '''
-                        cobertura coberturaReportFile: '**/coverage.xml'
+                    stages {
+                        stage ('Test CentOS 7') {
+                            steps {
+                                echo 'Executing unit tests @ CentOS 7...'
+                                sh '''
+                                    cd ${WORKSPACE}/$PROJECT_DIR
+                                    rm -f tests/argo_probe_eosccore_recommender
+                                    ln -s $PWD/modules/ tests/argo_probe_eosccore_recommender
+                                    coverage run -m xmlrunner discover --output-file junit.xml -v tests/
+                                    coverage xml
+                                '''
+                                cobertura coberturaReportFile: '**/coverage.xml'
+                            }
+                        }
+                        stage('Build CentOS 7 RPM') {
+                            steps {
+                                echo 'Building CentOS 7 RPM...'
+                                withCredentials(bindings: [sshUserPrivateKey(credentialsId: 'jenkins-rpm-repo', usernameVariable: 'REPOUSER', \
+                                                                            keyFileVariable: 'REPOKEY')]) {
+                                    sh "/home/jenkins/build-rpm.sh -w ${WORKSPACE} -b ${BRANCH_NAME} -d centos7 -p ${PROJECT_DIR} -s ${REPOKEY}"
+                                }
+                                archiveArtifacts artifacts: '**/*.rpm', fingerprint: true
+                            }
+                        }
                     }
                 }
-            }
-        }
-        stage ('Build'){
-            parallel {
-                stage ('Build Centos 7') {
+                stage('Rocky 9') {
                     agent {
                         docker {
-                            image 'argo.registry:5000/epel-7-ams'
+                            image 'argo.registry:5000/epel-9-ams'
                             args '-u jenkins:jenkins'
                         }
                     }
-                    steps {
-                        echo 'Building Rpm...'
-                        withCredentials(bindings: [sshUserPrivateKey(credentialsId: 'jenkins-rpm-repo', usernameVariable: 'REPOUSER', \
-                                                                    keyFileVariable: 'REPOKEY')]) {
-                            sh "/home/jenkins/build-rpm.sh -w ${WORKSPACE} -b ${BRANCH_NAME} -d centos7 -p ${PROJECT_DIR} -s ${REPOKEY}"
+                    stages {
+                        stage ('Test Rocky 9') {
+                            steps {
+                                echo 'Executing unit tests @ Rocky 9...'
+                                sh '''
+                                    cd ${WORKSPACE}/$PROJECT_DIR
+                                    rm -f tests/argo_probe_eosccore_recommender
+                                    ln -s $PWD/modules/ tests/argo_probe_eosccore_recommender
+                                    coverage run -m xmlrunner discover --output-file junit.xml -v tests/
+                                    coverage xml
+                                '''
+                                cobertura coberturaReportFile: '**/coverage.xml'
+                            }
                         }
-                        archiveArtifacts artifacts: '**/*.rpm', fingerprint: true
-                    }
-                    post {
-                        always {
-                            cleanWs()
+                        stage('Build Rocky 9 RPM') {
+                            steps {
+                                echo 'Building Rocky 9 RPM...'
+                                withCredentials(bindings: [sshUserPrivateKey(credentialsId: 'jenkins-rpm-repo', usernameVariable: 'REPOUSER', \
+                                                                            keyFileVariable: 'REPOKEY')]) {
+                                    sh "/home/jenkins/build-rpm.sh -w ${WORKSPACE} -b ${BRANCH_NAME} -d rocky9 -p ${PROJECT_DIR} -s ${REPOKEY}"
+                                }
+                                archiveArtifacts artifacts: '**/*.rpm', fingerprint: true
+                            }
                         }
                     }
                 }
