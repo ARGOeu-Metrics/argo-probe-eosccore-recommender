@@ -3,7 +3,7 @@
 
 Summary:       ARGO probe that checks the recommender system and its components
 Name:          argo-probe-eosccore-recommender
-Version:       0.1.0
+Version:       0.1.1
 Release:       2%{?dist}
 Source0:       %{name}-%{version}.tar.gz
 License:       ASL 2.0
@@ -44,5 +44,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_libexecdir}/argo/probes/eosccore-recommender/*.py
 
 %changelog
+* Thu Apr 4 2024 Katarina Zailac <kzailac@srce.hr> - 0.1.1-1
+- AO-933 Create Rocky 9 RPM for argo-probe-eosccore-recommender
+- REC-173 Fix import path for checks module
+- REC-173 Add support for recursively checking component dependencies
 * Fri Jan 20 2023 Angelos Tsalapatis <agelos.tsal@gmail.com> - 0.1.0-1
 - REC-173 Create eosccore-recommender probe
